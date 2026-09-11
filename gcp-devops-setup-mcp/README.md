@@ -191,13 +191,34 @@ with Cloud Run service `app-studio` in project `<PROJECT_ID>`:
 to npm automatically. It never handles your npm credentials directly — it reads them from a
 GitHub Actions secret you configure yourself:
 
-1. Create an npm [automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
-   for the `gcp-devops-setup-mcp` package (or your npm account).
+1. Create an npm token for the `gcp-devops-setup-mcp` package (or your npm account) that is
+   allowed to publish from CI **without an interactive 2FA/OTP prompt**:
+   - Classic tokens: type **Automation** (not "Publish" — that type still requires 2FA).
+   - [Granular access tokens](https://docs.npmjs.com/creating-and-viewing-access-tokens): enable
+     **"Bypass two-factor authentication requirement for write actions"** when creating it.
+
+   Using the wrong token type fails the publish step with:
+   ```
+   npm error code E403
+   npm error 403 403 Forbidden - PUT https://registry.npmjs.org/gcp-devops-setup-mcp -
+   Two-factor authentication or granular access token with bypass 2fa enabled is required
+   to publish packages.
+   ```
+   If you see this, the token itself needs to be re-created with one of the two options above —
+   the workflow and code are not the problem.
 2. In the GitHub repo, go to **Settings → Secrets and variables → Actions** and add it as a
    repository secret named `NPM_TOKEN`.
 3. Bump `version` in `gcp-devops-setup-mcp/package.json`, commit, then tag and push:
 
    ```bash
+   git tag gcp-devops-setup-mcp-v0.1.0
+   git push origin gcp-devops-setup-mcp-v0.1.0
+   ```
+
+   To retry after fixing the token (same version), delete and re-push the tag:
+   ```bash
+   git tag -d gcp-devops-setup-mcp-v0.1.0
+   git push origin :refs/tags/gcp-devops-setup-mcp-v0.1.0
    git tag gcp-devops-setup-mcp-v0.1.0
    git push origin gcp-devops-setup-mcp-v0.1.0
    ```
