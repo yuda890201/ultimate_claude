@@ -14,6 +14,13 @@ when developing and deploying a Cloud Run + GitHub application (e.g. App Studio)
 It works both as a tool Claude Code (CLI) can call from Google Cloud Shell, and as a server
 Claude Desktop connects to from your local Mac/Windows machine.
 
+> **Status**: this package is not yet published to the npm registry, so `npx -y
+> gcp-devops-setup-mcp` does not work yet. Until it is (see
+> [Publishing to npm](#publishing-to-npm-maintainers)), use the one-shot installer scripts below
+> — they clone this repo, build it, and register it into your `.mcp.json` / Claude Desktop
+> config for you. Once published, the `npx`-based config shown in each section becomes the
+> simpler option and the installer scripts are no longer necessary.
+
 ## Security model
 
 - `gcloud`, `gh`, and `git` are invoked with Node's `child_process.execFile` (never `exec`),
@@ -50,8 +57,19 @@ install these tools or perform interactive login for you.
    gcloud config get-value project
    ```
 
-2. Register the server with Claude Code. Create or edit a `.mcp.json` in your project directory
-   (or pass `--config` to point at one):
+2. Run the installer from your project directory. It clones this repo into
+   `~/.gcp-devops-setup-mcp` (override with `$GCP_DEVOPS_MCP_HOME`), builds it, and
+   merges a `gcp-devops-setup` entry into `.mcp.json` in the current directory:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/yuda890201/ultimate_claude/main/gcp-devops-setup-mcp/scripts/install.sh | bash -s -- --target claude-code
+   ```
+
+   Re-running it later (e.g. to pick up updates) just `git pull`s and rebuilds; it won't
+   clobber other entries already in your `.mcp.json`.
+
+   <details>
+   <summary>Once the package is published to npm, use this instead</summary>
 
    ```bash
    cat > .mcp.json <<'EOF'
@@ -66,16 +84,15 @@ install these tools or perform interactive login for you.
    EOF
    ```
 
-   You can also copy `.mcp-config-examples/claude-code.json` as a starting point.
+   (see `.mcp-config-examples/claude-code.json`). No clone/build needed — `npx` fetches and
+   caches the package itself.
+   </details>
 
 3. Start Claude Code from the same directory:
 
    ```bash
    claude
    ```
-
-   Claude Code will launch `npx -y gcp-devops-setup-mcp` on demand over stdio; no global install
-   or manual `npm install` step is required (npx fetches and caches the package the first time).
 
 4. Ask Claude to run `check_environment` or `gcloud_auth_status` to confirm the server is wired
    up correctly.
@@ -90,13 +107,26 @@ install these tools or perform interactive login for you.
    gcloud config set project <YOUR_PROJECT_ID>
    ```
 
-2. Open Claude Desktop's config file:
+2. Run the installer, which clones, builds, and registers the server directly into your Claude
+   Desktop config:
 
-   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   **macOS/Linux:**
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/yuda890201/ultimate_claude/main/gcp-devops-setup-mcp/scripts/install.sh | bash -s -- --target claude-desktop
+   ```
 
-3. Add (or merge) the `gcp-devops-setup` server, e.g. by copying
-   `.mcp-config-examples/claude-desktop.json`:
+   **Windows (PowerShell):**
+   ```powershell
+   irm https://raw.githubusercontent.com/yuda890201/ultimate_claude/main/gcp-devops-setup-mcp/scripts/install.ps1 -OutFile install.ps1
+   .\install.ps1 -Target claude-desktop
+   ```
+
+   <details>
+   <summary>Once the package is published to npm, use this instead</summary>
+
+   Add (or merge) into your Claude Desktop config (macOS:
+   `~/Library/Application Support/Claude/claude_desktop_config.json`, Windows:
+   `%APPDATA%\Claude\claude_desktop_config.json`; see `.mcp-config-examples/claude-desktop.json`):
 
    ```json
    {
@@ -108,9 +138,9 @@ install these tools or perform interactive login for you.
      }
    }
    ```
+   </details>
 
-4. Restart Claude Desktop. It will launch the server via `npx` the same way Claude Code does —
-   no global install needed.
+3. Restart Claude Desktop to pick up the new server.
 
 ## Local development (this repo)
 
@@ -154,3 +184,46 @@ with Cloud Run service `app-studio` in project `<PROJECT_ID>`:
 6. `init_git_repo` on the project's source directory, if it isn't already tracked.
 7. `deploy_with_secrets` to redeploy `app-studio` referencing the new secrets instead of the
    plaintext env vars.
+
+## Publishing to npm (maintainers)
+
+`.github/workflows/publish-gcp-devops-setup-mcp.yml` (at the repo root) publishes this package
+to npm automatically. It never handles your npm credentials directly — it reads them from a
+GitHub Actions secret you configure yourself:
+
+1. Create an npm token for the `gcp-devops-setup-mcp` package (or your npm account) that is
+   allowed to publish from CI **without an interactive 2FA/OTP prompt**:
+   - Classic tokens: type **Automation** (not "Publish" — that type still requires 2FA).
+   - [Granular access tokens](https://docs.npmjs.com/creating-and-viewing-access-tokens): enable
+     **"Bypass two-factor authentication requirement for write actions"** when creating it.
+
+   Using the wrong token type fails the publish step with:
+   ```
+   npm error code E403
+   npm error 403 403 Forbidden - PUT https://registry.npmjs.org/gcp-devops-setup-mcp -
+   Two-factor authentication or granular access token with bypass 2fa enabled is required
+   to publish packages.
+   ```
+   If you see this, the token itself needs to be re-created with one of the two options above —
+   the workflow and code are not the problem.
+2. In the GitHub repo, go to **Settings → Secrets and variables → Actions** and add it as a
+   repository secret named `NPM_TOKEN`.
+3. Bump `version` in `gcp-devops-setup-mcp/package.json`, commit, then tag and push:
+
+   ```bash
+   git tag gcp-devops-setup-mcp-v0.1.0
+   git push origin gcp-devops-setup-mcp-v0.1.0
+   ```
+
+   To retry after fixing the token (same version), delete and re-push the tag:
+   ```bash
+   git tag -d gcp-devops-setup-mcp-v0.1.0
+   git push origin :refs/tags/gcp-devops-setup-mcp-v0.1.0
+   git tag gcp-devops-setup-mcp-v0.1.0
+   git push origin gcp-devops-setup-mcp-v0.1.0
+   ```
+
+The workflow checks that the tag's version matches `package.json`, builds, and runs
+`npm publish --access public`. Once it succeeds, the `npx -y gcp-devops-setup-mcp` instructions
+above work as-is and the installer scripts are no longer required (though they still work fine
+for anyone who prefers a local clone).
