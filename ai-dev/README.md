@@ -33,7 +33,8 @@ ai-dev/
 │   └── CLAUDE.md
 ├── prompts/
 │   ├── NEW_APP_LAUNCH_PROMPT.md ← 新アプリ立ち上げ用プロンプト（Gemに渡すコピー用テンプレート）
-│   └── GEMINI_STANDING_INSTRUCTIONS.md ← Gem/Gemini Sparkの永続指示欄に貼る固定ルール
+│   ├── GEMINI_STANDING_INSTRUCTIONS.md ← Gem/Gemini Sparkの永続指示欄に貼る固定ルール
+│   └── GEM_SETUP_GUIDE.md       ← 開発用Gemの作成手順(名前/指示/知識/会話のきっかけ)
 ├── skills/
 │   └── project-open/SKILL.md    ← 既存アプリでの作業開始/終了の手順
 └── scripts/
@@ -161,6 +162,9 @@ Geminiに毎回同じルールを守らせたい場合は、
 Gem（Geminiの「指示」を保存できる機能）の指示欄に貼り付ければ、以後の会話に
 自動で適用されます。そのような永続設定欄が無いGemini製品を使っている場合は、
 会話の最初に毎回貼り付けてください。
+
+開発専用のGemをゼロから作る場合は、`ai-dev/prompts/GEM_SETUP_GUIDE.md` に
+名前・指示・知識ファイル・会話のきっかけまでを含めた設定案があります。
 
 ---
 
