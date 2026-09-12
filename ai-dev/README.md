@@ -32,7 +32,8 @@ ai-dev/
 │   ├── GEMINI.md
 │   └── CLAUDE.md
 ├── prompts/
-│   └── NEW_APP_LAUNCH_PROMPT.md ← 新アプリ立ち上げ用プロンプト（Gemに渡すコピー用テンプレート）
+│   ├── NEW_APP_LAUNCH_PROMPT.md ← 新アプリ立ち上げ用プロンプト（Gemに渡すコピー用テンプレート）
+│   └── GEMINI_STANDING_INSTRUCTIONS.md ← Gem/Gemini Sparkの永続指示欄に貼る固定ルール
 ├── skills/
 │   └── project-open/SKILL.md    ← 既存アプリでの作業開始/終了の手順
 └── scripts/
@@ -148,6 +149,18 @@ STEP 4（実アプリでのテスト）で、影響の小さいアプリ1〜2個
 - GitHubを正本として初期pushする
 
 という STEP 4 で確認予定の一連の流れが実行されます。
+
+---
+
+## Geminiに常に守らせたいルールがあるとき
+
+新アプリ立ち上げ以外の、日常的な作業（既存アプリの修正・スクリプト生成等）で
+Geminiに毎回同じルールを守らせたい場合は、
+`ai-dev/prompts/GEMINI_STANDING_INSTRUCTIONS.md` を使ってください。
+
+Gem（Geminiの「指示」を保存できる機能）の指示欄に貼り付ければ、以後の会話に
+自動で適用されます。そのような永続設定欄が無いGemini製品を使っている場合は、
+会話の最初に毎回貼り付けてください。
 
 ---
 
