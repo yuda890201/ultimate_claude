@@ -30,7 +30,8 @@ ai-dev/
 ├── templates/                   ← 各アプリに配置するMDのひな形
 │   ├── GEMINI.md
 │   └── CLAUDE.md
-├── prompts/                     ← 新アプリ立ち上げ用プロンプト（STEP 3で作成予定）
+├── prompts/
+│   └── NEW_APP_LAUNCH_PROMPT.md ← 新アプリ立ち上げ用プロンプト（Gemに渡すコピー用テンプレート）
 ├── skills/                      ← AI用スキル（STEP 6で必要なものだけ作成）
 └── scripts/                     ← 安全装置スクリプト（STEP 6で必要なものだけ作成）
 ```
@@ -122,6 +123,21 @@ cp ~/ai-dev/templates/CLAUDE.md ~/ai-dev/projects/<アプリ名>/CLAUDE.md
 現時点でテンプレートを適用したアプリは**まだありません**。
 STEP 4（実アプリでのテスト）で、影響の小さいアプリ1〜2個に試験適用してから、
 問題がなければ他のアプリへ展開します。21アプリへの一括適用はしません。
+
+---
+
+## 新アプリを立ち上げるとき
+
+`ai-dev/prompts/NEW_APP_LAUNCH_PROMPT.md` に、新規アプリ立ち上げ用の
+コピー用プロンプトがあります。湯田代表がGemでアプリの構想を固めた後、
+このプロンプトのプレースホルダーを埋めてAIに渡すと、
+
+- 共通開発ルールを継承し
+- GEMINI.md / CLAUDE.md を自動生成・配置し
+- `~/ai-dev/projects/` 配下に正しく配置し
+- GitHubを正本として初期pushする
+
+という STEP 4 で確認予定の一連の流れが実行されます。
 
 ---
 
