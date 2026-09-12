@@ -91,10 +91,12 @@ Claude に引き継ぐか、湯田代表に確認してください。
 
 ## 3. 作業の流れ（このプロジェクトでの実践）
 
-1. 共通ルール第3章「作業開始時の確認」を実施する
+1. `ai-dev/skills/project-open/SKILL.md` の手順（作業開始時）に従う
+   - Cloud Shellでは `~/ai-dev/scripts/check-handoff.sh` を実行する
 2. 上記「2. プロジェクト固有の情報」を確認する
 3. 依頼内容に沿って作業する
 4. 共通ルール第9章に沿ってテスト・ビルドを実施する
-5. 共通ルール第4章「作業終了時の確認」を実施する
+5. `ai-dev/skills/project-open/SKILL.md` の手順（作業終了時）に従う
+   - GCP/Cloud Runを扱った場合は `~/ai-dev/scripts/check-gcp-project.sh` も実行する
 6. commit / push し、Pull Request を作成する（draft）
 7. 次のAI（Claude）が引き継げる形で報告する
