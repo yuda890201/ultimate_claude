@@ -26,7 +26,8 @@ Gemini も Claude も、どの環境から作業する場合も、ここを基�
 ai-dev/
 ├── README.md                    ← このファイル
 ├── rules/
-│   └── DEVELOPMENT_RULES.md     ← 共通開発ルール（全AI共通・最重要）
+│   ├── DEVELOPMENT_RULES.md     ← 共通開発ルール（全AI共通・最重要）
+│   └── MOBILE_SETUP.md         ← スマホ+Cloud Shellでの環境セットアップガイド
 ├── templates/                   ← 各アプリに配置するMDのひな形
 │   ├── GEMINI.md
 │   └── CLAUDE.md
@@ -36,7 +37,8 @@ ai-dev/
 │   └── project-open/SKILL.md    ← 既存アプリでの作業開始/終了の手順
 └── scripts/
     ├── check-handoff.sh         ← 未コミット/未push/未マージブランチの検出
-    └── check-gcp-project.sh     ← GCPプロジェクトの取り違え検出
+    ├── check-gcp-project.sh     ← GCPプロジェクトの取り違え検出
+    └── bashrc-snippet.sh        ← Cloud Shellの ~/.bashrc に追記する自動セットアップ
 ```
 
 ---
@@ -45,7 +47,12 @@ ai-dev/
 
 Cloud Shell 側では、このリポジトリを clone して `~/ai-dev` として使います。
 
-### 初回のみ
+> **スマホから使う場合は、この節を手で毎回実行する代わりに
+> [`ai-dev/rules/MOBILE_SETUP.md`](rules/MOBILE_SETUP.md) の手順（1回だけの設定で
+> 以後は自動化される）を使うことをおすすめします。**
+> 以下は、その自動化が内部で行っている内容の説明です。
+
+### 初回のみ（手動で行う場合）
 
 ```bash
 # 1. 作業用ディレクトリを作る
