@@ -33,6 +33,7 @@ description: どんなときに使うかを書く。**これが自動発動の�
 
 | スキル | 何のため |
 |---|---|
+| `project-open` | 既存アプリでの作業開始/終了、Gemini/Claude 間の引き継ぎ |
 | `verify-that-can-fail` | 検証・診断・確認スクリプトを書くとき。「通ったらOK」の判定が本当に機能しているかを確かめる規律 |
 | `powershell-runbook` | 人間に実行させる手順やスクリプトを書くとき（Windows PowerShell 5.1 前提） |
 | `mcp-server-pitfalls` | MCPサーバを実装するとき。Gemini アプリに繋ぐ場合の要件を含む |

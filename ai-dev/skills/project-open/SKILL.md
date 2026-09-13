@@ -1,3 +1,8 @@
+---
+name: project-open
+description: 既存アプリのリポジトリで作業を開始/終了するとき、および Gemini/Claude 間で作業を引き継ぐときに使う。共通開発ルールを読み、安全確認スクリプト（check-handoff.sh / check-gcp-project.sh）を漏れなく実行する。新規アプリの立ち上げには使わない（ai-dev/prompts/NEW_APP_LAUNCH_PROMPT.md を使う）。Use when starting or finishing work in an existing app repository, or when handing work over between Gemini and Claude.
+---
+
 # project-open スキル
 
 ## 目的

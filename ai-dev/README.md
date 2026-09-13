@@ -35,8 +35,12 @@ ai-dev/
 │   ├── NEW_APP_LAUNCH_PROMPT.md ← 新アプリ立ち上げ用プロンプト（Gemに渡すコピー用テンプレート）
 │   ├── GEMINI_STANDING_INSTRUCTIONS.md ← Gem/Gemini Sparkの永続指示欄に貼る固定ルール
 │   └── GEM_SETUP_GUIDE.md       ← 開発用Gemの作成手順(名前/指示/知識/会話のきっかけ)
-├── skills/
-│   └── project-open/SKILL.md    ← 既存アプリでの作業開始/終了の手順
+├── skills/                      ← AI用スキル（README.md に一覧と有効化の手順）
+│   ├── project-open/            ← 既存アプリでの作業開始/終了の手順
+│   ├── verify-that-can-fail/    ← 検証・診断・確認スクリプトを書くときの規律
+│   ├── powershell-runbook/      ← 人間に実行させる手順の書き方（PowerShell 5.1）
+│   ├── mcp-server-pitfalls/     ← MCPサーバ実装の落とし穴（Gemini接続の要件を含む）
+│   └── mobile-ui-selfcheck/     ← 実機のスマホなしでモバイルWeb UIを検証する
 └── scripts/
     ├── check-handoff.sh         ← 未コミット/未push/未マージブランチの検出
     ├── check-gcp-project.sh     ← GCPプロジェクトの取り違え検出
