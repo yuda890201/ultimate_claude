@@ -89,6 +89,55 @@ powershell -ExecutionPolicy Bypass -File scripts\deploy.ps1
 カレントディレクトリのスクリプトも `.\deploy.ps1` と書く必要がある
 （`deploy.ps1` だけでは PATH を探しに行く）。
 
+## PATH に入っていても、本物とは限らない（Store のアプリ実行エイリアス）
+
+Windows は `python.exe` / `python3.exe` のスタブを
+`%LOCALAPPDATA%\Microsoft\WindowsApps` に置く。これが PATH の先頭付近に
+並ぶため、**Python が入っていても `python --version` が何も返さない。**
+`Get-Command python` は成功するので、存在確認だけでは見分けられない。
+
+```powershell
+# 悪い: PATH で見つかったら使う
+if (Get-Command python) { $py = "python" }
+
+# よい: 実際に動かして Python 3 だと答えたものだけ採用する
+function Find-Python {
+  foreach ($c in @("python","python3","py")) {
+    if (-not (Get-Command $c -ErrorAction SilentlyContinue)) { continue }
+    try { $out = & $c --version 2>&1 } catch { continue }
+    if ($LASTEXITCODE -eq 0 -and ($out -join " ") -match "Python 3\.") { return $c }
+  }
+  return $null
+}
+```
+
+それでも見つからないなら、**標準のインストール先を直接見る。**
+
+```powershell
+Get-ChildItem "$env:LOCALAPPDATA\Programs\Python\Python3*\python.exe",
+              "$env:ProgramFiles\Python3*\python.exe",
+              "C:\Python3*\python.exe" -ErrorAction SilentlyContinue
+```
+
+複数見つかったときに新しい方を選ぶなら、**ディレクトリ名の数字を整数に
+して並べる。** ファイル名は全部 `python.exe` なので `Sort-Object Name`
+では並ばず、文字列比較では `Python39` が `Python312` より上に来る。
+
+## `$env:Path` への追加は、そのウィンドウでしか生きない
+
+上の件の回避策として `$env:Path = "...;" + $env:Path` を渡したが、
+**次に開いたターミナルでは消えている。** 同じ失敗がもう一度起きた。
+
+`$env:` はプロセスの環境変数である。永続させるには
+`[Environment]::SetEnvironmentVariable("Path", ..., "User")` が必要で、
+それはそれで PATH を壊す事故につながる。
+
+**PATH を手で足させる手順は、手順側の欠陥だと考える。** 足させるのでは
+なく、スクリプトが自分で探す。どうしても環境側を直す必要があるなら、
+一時的な回避策（その場の `$env:Path`）と恒久的な直し方（設定 > アプリ >
+アプリの詳細設定 > アプリ実行エイリアスで `python.exe` を OFF）を
+**両方、同じメッセージに書く。**
+
 ## `Get-Clipboard` を手順に入れない
 
 クリップボードは利用者が別のものをコピーした瞬間に壊れる。実際に、
